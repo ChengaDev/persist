@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/atotto/clipboard"
 	"github.com/ChengaDev/persist/internal/config"
 	"github.com/ChengaDev/persist/internal/crypto"
 	"github.com/ChengaDev/persist/internal/storage"
+	"github.com/atotto/clipboard"
 	"github.com/spf13/cobra"
 )
 
