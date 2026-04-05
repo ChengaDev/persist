@@ -412,18 +412,24 @@
         <span class="prompt">$</span>
         <span class="cmd">psst init</span>
       </div>
+      <div class="terminal-line" style="margin-top:0.6rem">
+        <span class="comment"># plain value</span>
+      </div>
       <div class="terminal-line">
         <span class="prompt">$</span>
         <span class="cmd">psst save deploy-cmd --value "kubectl apply -f prod.yaml"</span>
       </div>
       <div class="terminal-line">
         <span class="prompt">$</span>
-        <span class="cmd">psst save db-password --secure</span>
+        <span class="cmd">psst get deploy-cmd</span>
+        <span class="comment"># → clipboard ✓</span>
+      </div>
+      <div class="terminal-line" style="margin-top:0.6rem">
+        <span class="comment"># encrypted value</span>
       </div>
       <div class="terminal-line">
         <span class="prompt">$</span>
-        <span class="cmd">psst get deploy-cmd</span>
-        <span class="comment"># → clipboard ✓</span>
+        <span class="cmd">psst save db-password --secure</span>
       </div>
       <div class="terminal-line">
         <span class="prompt">$</span>
