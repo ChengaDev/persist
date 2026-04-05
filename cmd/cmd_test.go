@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/atotto/clipboard"
 	"github.com/ChengaDev/persist/internal/crypto"
 	"github.com/ChengaDev/persist/internal/storage"
 )
@@ -387,6 +388,9 @@ func TestRunLock(t *testing.T) {
 // --- get (plain) -------------------------------------------------------------
 
 func TestRunGet_PlainEntry(t *testing.T) {
+	if err := clipboard.WriteAll(""); err != nil {
+		t.Skipf("clipboard not available: %v", err)
+	}
 	setupInitializedStore(t, []byte("password"))
 	resetSaveFlags()
 	saveValue = "clipboard-value"
