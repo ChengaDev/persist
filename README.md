@@ -1,7 +1,7 @@
 # psst
 
 [![CI](https://github.com/ChengaDev/persist/actions/workflows/ci.yml/badge.svg)](https://github.com/ChengaDev/persist/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/ChengaDev/persist)](https://github.com/ChengaDev/persist/releases)
+[![Release](https://img.shields.io/github/v/release/ChengaDev/persist?color=blue)](https://github.com/ChengaDev/persist/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 **psst** is your terminal clipboard, always within arm's reach. Save anything - tokens, connection strings, commands, snippets - and paste it anywhere in one command. No more hunting through notes or browser tabs. Sensitive values are encrypted and never leave your machine, so what's yours stays yours.
