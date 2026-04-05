@@ -201,6 +201,16 @@
     }
 
     /* ── Terminal snippet ────────────────────── */
+    .terminals {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 600px) { .terminals { grid-template-columns: 1fr; } }
+
     .terminal {
       background: #0a0a0a;
       border: 1px solid #1e1e1e;
@@ -209,12 +219,18 @@
       text-align: left;
       font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
       font-size: 0.83rem;
-      max-width: 480px;
-      margin: 0 auto;
       transition: border-color 0.2s;
     }
 
     .terminal:hover { border-color: #2a2a2a; }
+
+    .terminal-label {
+      font-size: 0.72rem;
+      color: #4b5563;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.75rem;
+    }
 
     .terminal-bar {
       display: flex;
@@ -395,46 +411,59 @@
       <a href="https://github.com/ChengaDev/persist/releases" class="btn-primary">Download</a>
       <a href="https://github.com/ChengaDev/persist" class="btn-secondary">View Source</a>
     </div>
-    <div class="terminal animate-fade-up delay-4">
-      <div class="terminal-bar">
-        <div class="terminal-dots">
-          <span class="red"></span>
-          <span class="yellow"></span>
-          <span class="green"></span>
+    <div class="terminals animate-fade-up delay-4">
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="terminal-dots">
+            <span class="red"></span>
+            <span class="yellow"></span>
+            <span class="green"></span>
+          </div>
         </div>
-        <button class="copy-btn" onclick="copyInstall(this)">Copy</button>
+        <div class="terminal-label">Plain value</div>
+        <div class="terminal-line">
+          <span class="prompt">$</span>
+          <span class="cmd">psst save deploy-cmd \</span>
+        </div>
+        <div class="terminal-line">
+          <span class="prompt"> </span>
+          <span class="cmd">  --value "kubectl apply -f prod.yaml"</span>
+        </div>
+        <div class="terminal-line">
+          <span class="prompt">$</span>
+          <span class="cmd">psst get deploy-cmd</span>
+        </div>
+        <div class="terminal-line">
+          <span class="prompt"> </span>
+          <span class="comment">→ clipboard ✓</span>
+        </div>
       </div>
-      <div class="terminal-line">
-        <span class="prompt">$</span>
-        <span class="cmd">go install github.com/ChengaDev/persist@latest</span>
-      </div>
-      <div class="terminal-line">
-        <span class="prompt">$</span>
-        <span class="cmd">psst init</span>
-      </div>
-      <div class="terminal-line" style="margin-top:0.6rem">
-        <span class="comment"># plain value</span>
-      </div>
-      <div class="terminal-line">
-        <span class="prompt">$</span>
-        <span class="cmd">psst save deploy-cmd --value "kubectl apply -f prod.yaml"</span>
-      </div>
-      <div class="terminal-line">
-        <span class="prompt">$</span>
-        <span class="cmd">psst get deploy-cmd</span>
-        <span class="comment"># → clipboard ✓</span>
-      </div>
-      <div class="terminal-line" style="margin-top:0.6rem">
-        <span class="comment"># encrypted value</span>
-      </div>
-      <div class="terminal-line">
-        <span class="prompt">$</span>
-        <span class="cmd">psst save db-password --secure</span>
-      </div>
-      <div class="terminal-line">
-        <span class="prompt">$</span>
-        <span class="cmd">psst get db-password</span>
-        <span class="comment"># → clipboard ✓</span>
+
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="terminal-dots">
+            <span class="red"></span>
+            <span class="yellow"></span>
+            <span class="green"></span>
+          </div>
+        </div>
+        <div class="terminal-label">Encrypted value</div>
+        <div class="terminal-line">
+          <span class="prompt">$</span>
+          <span class="cmd">psst save db-password --secure</span>
+        </div>
+        <div class="terminal-line">
+          <span class="prompt"> </span>
+          <span class="comment">Secret value (hidden): ••••••••</span>
+        </div>
+        <div class="terminal-line">
+          <span class="prompt">$</span>
+          <span class="cmd">psst get db-password</span>
+        </div>
+        <div class="terminal-line">
+          <span class="prompt"> </span>
+          <span class="comment">→ clipboard ✓</span>
+        </div>
       </div>
     </div>
   </div>
