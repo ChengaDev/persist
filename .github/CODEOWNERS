@@ -1,0 +1,8 @@
+# All files — ChengaDev is the default owner and must review every PR.
+* @ChengaDev
+
+# Cryptography changes require extra scrutiny.
+/internal/crypto/ @ChengaDev
+
+# Storage schema changes affect all saved data.
+/internal/storage/ @ChengaDev

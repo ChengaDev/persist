@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="psst — a secure, local CLI clipboard manager. Save encrypted secrets once, retrieve them directly into your clipboard. No cloud, no leaks.">
+  <title>psst — secure clipboard manager for the terminal</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0d0d0d;
+      color: #e5e7eb;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── Animations ──────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.5); }
+      50%       { box-shadow: 0 0 0 6px rgba(16,185,129,0); }
+    }
+
+    @keyframes glow {
+      0%, 100% { text-shadow: 0 0 20px rgba(16,185,129,0.3); }
+      50%       { text-shadow: 0 0 40px rgba(16,185,129,0.6); }
+    }
+
+    .animate-fade-up { animation: fadeUp 0.6s ease both; }
+    .animate-fade-in { animation: fadeIn 0.6s ease both; }
+
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.35s; }
+    .delay-4 { animation-delay: 0.5s; }
+
+    /* ── Nav ─────────────────────────────────── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 2.5rem;
+      border-bottom: 1px solid #1a1a1a;
+      position: sticky;
+      top: 0;
+      background: rgba(13,13,13,0.92);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+      animation: fadeIn 0.4s ease both;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-weight: 700;
+      font-size: 1rem;
+      color: white;
+      text-decoration: none;
+      letter-spacing: -0.01em;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+
+    .nav-dot {
+      width: 9px;
+      height: 9px;
+      background: #10b981;
+      border-radius: 50%;
+      animation: pulse-dot 2s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.75rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: #9ca3af;
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.15s;
+    }
+
+    .nav-links a:hover { color: #fff; }
+
+    /* ── Hero ────────────────────────────────── */
+    .hero {
+      text-align: center;
+      padding: 6.5rem 1.5rem 5rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(16,185,129,0.08);
+      border: 1px solid rgba(16,185,129,0.2);
+      border-radius: 999px;
+      padding: 0.3rem 0.9rem;
+      font-size: 0.78rem;
+      color: #10b981;
+      font-weight: 500;
+      margin-bottom: 1.75rem;
+      letter-spacing: 0.02em;
+    }
+
+    .hero-badge .dot {
+      width: 6px;
+      height: 6px;
+      background: #10b981;
+      border-radius: 50%;
+      animation: pulse-dot 1.5s ease-in-out infinite;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 3.8rem);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.35rem;
+    }
+
+    .hero h1 .brand {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      background: linear-gradient(135deg, #fff 0%, #d1d5db 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero h1 .accent {
+      color: #10b981;
+      animation: glow 3s ease-in-out infinite;
+    }
+
+    .hero p {
+      color: #9ca3af;
+      font-size: 1.08rem;
+      max-width: 500px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.7;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 2.25rem;
+    }
+
+    .btn-primary {
+      background: #10b981;
+      color: #fff;
+      padding: 0.7rem 1.6rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+    }
+
+    .btn-primary:hover {
+      background: #059669;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(16,185,129,0.3);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: #e5e7eb;
+      padding: 0.7rem 1.6rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      border: 1px solid #2d2d2d;
+      transition: border-color 0.15s, color 0.15s, transform 0.15s;
+    }
+
+    .btn-secondary:hover {
+      border-color: #555;
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    /* ── Terminal snippet ────────────────────── */
+    .terminal {
+      background: #0a0a0a;
+      border: 1px solid #1e1e1e;
+      border-radius: 12px;
+      padding: 1.1rem 1.4rem;
+      text-align: left;
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 0.83rem;
+      max-width: 480px;
+      margin: 0 auto;
+      transition: border-color 0.2s;
+    }
+
+    .terminal:hover { border-color: #2a2a2a; }
+
+    .terminal-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.85rem;
+    }
+
+    .terminal-dots { display: flex; gap: 0.4rem; }
+
+    .terminal-dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .terminal-dots .red    { background: #ff5f56; }
+    .terminal-dots .yellow { background: #ffbd2e; }
+    .terminal-dots .green  { background: #27c93f; }
+
+    .copy-btn {
+      background: #1e1e1e;
+      border: none;
+      color: #9ca3af;
+      padding: 0.25rem 0.7rem;
+      border-radius: 5px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .copy-btn:hover { background: #2a2a2a; color: #fff; }
+
+    .terminal-line { display: flex; gap: 0.6rem; line-height: 1.8; }
+    .prompt  { color: #10b981; user-select: none; }
+    .cmd     { color: #d1d5db; }
+    .comment { color: #4b5563; }
+
+    /* ── Section ─────────────────────────────── */
+    section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 5rem 1.5rem;
+    }
+
+    section h2 {
+      text-align: center;
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.6rem;
+      letter-spacing: -0.02em;
+    }
+
+    .section-sub {
+      text-align: center;
+      color: #6b7280;
+      font-size: 0.9rem;
+      margin-bottom: 2.75rem;
+    }
+
+    hr { border: none; border-top: 1px solid #1a1a1a; }
+
+    /* ── Feature cards ───────────────────────── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    @media (max-width: 640px)  { .cards { grid-template-columns: 1fr; } }
+    @media (min-width: 641px) and (max-width: 860px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+
+    .card {
+      background: #0f0f0f;
+      border: 1px solid #1e1e1e;
+      border-radius: 12px;
+      padding: 1.4rem 1.3rem;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      opacity: 0;
+      transform: translateY(16px);
+    }
+
+    .card.visible {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      border-color: #2a2a2a;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    }
+
+    .card-icon { font-size: 1.15rem; margin-bottom: 0.65rem; }
+
+    .card h3 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #f3f4f6;
+      margin-bottom: 0.45rem;
+    }
+
+    .card p {
+      font-size: 0.82rem;
+      color: #6b7280;
+      line-height: 1.65;
+    }
+
+    /* ── Pills ───────────────────────────────── */
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .pill {
+      border: 1px solid #1e1e1e;
+      border-radius: 999px;
+      padding: 0.3rem 0.9rem;
+      font-size: 0.8rem;
+      color: #9ca3af;
+      transition: border-color 0.15s, color 0.15s, transform 0.15s;
+      cursor: default;
+    }
+
+    .pill:hover {
+      border-color: #3f3f3f;
+      color: #e5e7eb;
+      transform: scale(1.04);
+    }
+
+    /* ── Footer ──────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      color: #4b5563;
+      font-size: 0.8rem;
+      border-top: 1px solid #1a1a1a;
+    }
+
+    footer a { color: #6b7280; text-decoration: none; transition: color 0.15s; }
+    footer a:hover { color: #9ca3af; }
+    footer span { margin: 0 0.5rem; }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav>
+    <a href="#" class="nav-logo">
+      <span class="nav-dot"></span>
+      psst
+    </a>
+    <ul class="nav-links">
+      <li><a href="https://github.com/ChengaDev/persist">GitHub</a></li>
+      <li><a href="https://github.com/ChengaDev/persist/releases">Releases</a></li>
+      <li><a href="https://github.com/ChengaDev/persist#readme">Docs</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-badge animate-fade-in">
+      <span class="dot"></span>
+      Open Source &mdash; MIT License
+    </div>
+    <h1 class="animate-fade-up delay-1">
+      <span class="brand">Persist</span><br>
+      Copy-paste securely.<br>Keep your values <span class="accent">close</span>.
+    </h1>
+    <p class="animate-fade-up delay-2">
+      Your terminal clipboard, always within arm's reach. Save anything - tokens, connection strings, commands, snippets - and paste it anywhere in one command. No more hunting through notes or browser tabs. Sensitive values are encrypted and never leave your machine, so what's yours stays yours.
+    </p>
+    <div class="hero-buttons animate-fade-up delay-3">
+      <a href="https://github.com/ChengaDev/persist/releases" class="btn-primary">Download</a>
+      <a href="https://github.com/ChengaDev/persist" class="btn-secondary">View Source</a>
+    </div>
+    <div class="terminal animate-fade-up delay-4">
+      <div class="terminal-bar">
+        <div class="terminal-dots">
+          <span class="red"></span>
+          <span class="yellow"></span>
+          <span class="green"></span>
+        </div>
+        <button class="copy-btn" onclick="copyInstall(this)">Copy</button>
+      </div>
+      <div class="terminal-line">
+        <span class="prompt">$</span>
+        <span class="cmd">go install github.com/ChengaDev/persist@latest</span>
+      </div>
+      <div class="terminal-line">
+        <span class="prompt">$</span>
+        <span class="cmd">psst init</span>
+      </div>
+      <div class="terminal-line">
+        <span class="prompt">$</span>
+        <span class="cmd">psst save deploy-cmd --value "kubectl apply -f prod.yaml"</span>
+      </div>
+      <div class="terminal-line">
+        <span class="prompt">$</span>
+        <span class="cmd">psst save db-password --secure</span>
+      </div>
+      <div class="terminal-line">
+        <span class="prompt">$</span>
+        <span class="cmd">psst get deploy-cmd</span>
+        <span class="comment"># → clipboard ✓</span>
+      </div>
+      <div class="terminal-line">
+        <span class="prompt">$</span>
+        <span class="cmd">psst get db-password</span>
+        <span class="comment"># → clipboard ✓</span>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- Why psst -->
+  <section>
+    <h2>Why psst?</h2>
+    <p class="section-sub">Secure by default. No cloud, no daemon, no drama.</p>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">🔐</div>
+        <h3>AES-256-GCM Encryption</h3>
+        <p>Every secure entry is encrypted at rest with AES-256-GCM. Keys are derived with Argon2id and a unique per-entry salt — a compromised database reveals nothing without your master password.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🛡️</div>
+        <h3>Zero Shell History Leakage</h3>
+        <p>psst never accepts secret values as CLI flags. Secure entries are entered through a hidden prompt or read directly from the clipboard — your terminal history stays clean.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📋</div>
+        <h3>Clipboard Injection</h3>
+        <p>psst get writes directly to the system clipboard without printing to stdout. Set clipboard_clear_after to auto-wipe the clipboard after a configurable number of seconds.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⏱️</div>
+        <h3>Password Sessions</h3>
+        <p>Avoid re-typing your master password on every command. Set a session_timeout and psst caches the password locally for that window — stored at chmod 600, deleted on expiry.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔍</div>
+        <h3>Fuzzy Key Search</h3>
+        <p>psst list github filters entries by substring. Make a typo with psst get? psst suggests the closest matching keys using Levenshtein distance — no more copy-paste of exact names.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏠</div>
+        <h3>Local-Only</h3>
+        <p>No cloud, no network calls, no telemetry. Everything lives in ~/.persist/data.db on your machine. Works fully offline and responds instantly.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- Built with -->
+  <section>
+    <h2>Built with</h2>
+    <p class="section-sub">A minimal, auditable stack — no hidden dependencies.</p>
+    <div class="pills">
+      <span class="pill">Go</span>
+      <span class="pill">AES-256-GCM</span>
+      <span class="pill">Argon2id</span>
+      <span class="pill">SQLite</span>
+      <span class="pill">cobra</span>
+      <span class="pill">macOS</span>
+      <span class="pill">Linux</span>
+      <span class="pill">amd64</span>
+      <span class="pill">arm64</span>
+      <span class="pill">MIT License</span>
+    </div>
+  </section>
+
+  <hr>
+
+  <footer>
+    Built by <a href="https://github.com/ChengaDev">@ChengaDev</a>
+    <span>·</span>
+    <a href="https://github.com/ChengaDev/persist">GitHub</a>
+    <span>·</span>
+    <a href="https://github.com/ChengaDev/persist/blob/main/SECURITY.md">Security Policy</a>
+    <span>·</span>
+    MIT License
+  </footer>
+
+  <script>
+    function copyInstall(btn) {
+      navigator.clipboard.writeText('go install github.com/ChengaDev/persist@latest');
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 2000);
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 80);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.card').forEach(card => observer.observe(card));
+  </script>
+
+</body>
+</html>
