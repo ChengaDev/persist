@@ -8,9 +8,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/atotto/clipboard"
 	"github.com/ChengaDev/persist/internal/crypto"
 	"github.com/ChengaDev/persist/internal/storage"
+	"github.com/atotto/clipboard"
 )
 
 // setHome redirects os.UserHomeDir() to a temp directory for both Unix and Windows.
