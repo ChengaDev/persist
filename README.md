@@ -39,20 +39,33 @@ psst get  db-password            # decrypts and copies straight to clipboard
 
 ## Installation
 
-### Pre-built binaries
+Download the binary for your platform from the [Releases](https://github.com/ChengaDev/persist/releases) page and move it to your PATH:
 
-Download from the [Releases](https://github.com/ChengaDev/persist/releases) page.
-Available for Linux and macOS on amd64 and arm64.
-
-### From source
-
+**macOS (Apple Silicon)**
 ```sh
-git clone https://github.com/ChengaDev/persist.git
-cd persist
-make install          # builds and copies psst to /usr/local/bin
+curl -L https://github.com/ChengaDev/persist/releases/latest/download/psst-darwin-arm64 -o psst
+chmod +x psst && sudo mv psst /usr/local/bin/
 ```
 
-**Requirements:** Go 1.19+
+**macOS (Intel)**
+```sh
+curl -L https://github.com/ChengaDev/persist/releases/latest/download/psst-darwin-amd64 -o psst
+chmod +x psst && sudo mv psst /usr/local/bin/
+```
+
+**Linux (amd64)**
+```sh
+curl -L https://github.com/ChengaDev/persist/releases/latest/download/psst-linux-amd64 -o psst
+chmod +x psst && sudo mv psst /usr/local/bin/
+```
+
+**Windows** — download `psst-windows-amd64.exe` from the [Releases](https://github.com/ChengaDev/persist/releases) page and add it to your PATH.
+
+### From source (Go 1.19+)
+
+```sh
+go install github.com/ChengaDev/persist@latest
+```
 
 ---
 
