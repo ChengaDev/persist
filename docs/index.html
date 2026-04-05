@@ -202,14 +202,12 @@
 
     /* ── Terminal snippet ────────────────────── */
     .terminals {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      flex-direction: column;
       gap: 1rem;
-      max-width: 760px;
+      max-width: 480px;
       margin: 0 auto;
     }
-
-    @media (max-width: 600px) { .terminals { grid-template-columns: 1fr; } }
 
     .terminal {
       background: #0a0a0a;
@@ -268,6 +266,7 @@
     .prompt  { color: #10b981; user-select: none; }
     .cmd     { color: #d1d5db; }
     .comment { color: #4b5563; }
+    .output  { color: #6b7280; }
 
     /* ── Section ─────────────────────────────── */
     section {
@@ -423,19 +422,19 @@
         <div class="terminal-label">Plain value</div>
         <div class="terminal-line">
           <span class="prompt">$</span>
-          <span class="cmd">psst save deploy-cmd \</span>
+          <span class="cmd">psst save deploy-cmd --value "my-value"</span>
         </div>
         <div class="terminal-line">
           <span class="prompt"> </span>
-          <span class="cmd">  --value "kubectl apply -f prod.yaml"</span>
+          <span class="output">Entry "deploy-cmd" saved.</span>
         </div>
-        <div class="terminal-line">
+        <div class="terminal-line" style="margin-top:0.4rem">
           <span class="prompt">$</span>
           <span class="cmd">psst get deploy-cmd</span>
         </div>
         <div class="terminal-line">
           <span class="prompt"> </span>
-          <span class="comment">→ clipboard ✓</span>
+          <span class="output">→ clipboard ✓</span>
         </div>
       </div>
 
@@ -454,15 +453,27 @@
         </div>
         <div class="terminal-line">
           <span class="prompt"> </span>
-          <span class="comment">Secret value (hidden): ••••••••</span>
+          <span class="output">Secret value (hidden): ••••••••</span>
         </div>
         <div class="terminal-line">
+          <span class="prompt"> </span>
+          <span class="output">Master password: ••••••••</span>
+        </div>
+        <div class="terminal-line">
+          <span class="prompt"> </span>
+          <span class="output">Secure entry "db-password" saved.</span>
+        </div>
+        <div class="terminal-line" style="margin-top:0.4rem">
           <span class="prompt">$</span>
           <span class="cmd">psst get db-password</span>
         </div>
         <div class="terminal-line">
           <span class="prompt"> </span>
-          <span class="comment">→ clipboard ✓</span>
+          <span class="output">Master password: ••••••••</span>
+        </div>
+        <div class="terminal-line">
+          <span class="prompt"> </span>
+          <span class="output">→ clipboard ✓</span>
         </div>
       </div>
     </div>
