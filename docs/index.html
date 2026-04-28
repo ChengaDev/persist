@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="psst — a secure, local CLI clipboard manager. Save encrypted secrets once, retrieve them directly into your clipboard. No cloud, no leaks.">
+  <meta name="description" content="Persist — a secure, local CLI clipboard manager. Save encrypted secrets once, retrieve them directly into your clipboard. No cloud, no leaks.">
   <title>Persist — secure clipboard manager for the terminal</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -376,6 +376,45 @@
     footer a { color: #6b7280; text-decoration: none; transition: color 0.15s; }
     footer a:hover { color: #9ca3af; }
     footer span { margin: 0 0.5rem; }
+
+    /* ── Install section ─────────────────────── */
+    .install-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .install-cmd {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: #0f0f0f;
+      border: 1px solid #1e1e1e;
+      border-radius: 10px;
+      padding: 0.85rem 1.2rem;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.92rem;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .install-cmd .prompt { color: #10b981; user-select: none; }
+    .install-cmd code { color: #d1d5db; flex: 1; }
+
+    .install-alts {
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.8rem;
+    }
+
+    .install-alts a {
+      color: #6b7280;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .install-alts a:hover { color: #9ca3af; }
   </style>
 </head>
 <body>
@@ -407,7 +446,7 @@
       Your terminal clipboard, always within arm's reach. Save anything - tokens, connection strings, commands, snippets - and paste it anywhere in one command. No more hunting through notes or browser tabs. Sensitive values are encrypted and never leave your machine, so what's yours stays yours.
     </p>
     <div class="hero-buttons animate-fade-up delay-3">
-      <a href="https://github.com/ChengaDev/persist/releases" class="btn-primary">Download</a>
+      <a href="#install" class="btn-primary">Install</a>
       <a href="https://github.com/ChengaDev/persist" class="btn-secondary">View Source</a>
     </div>
     <div class="terminals animate-fade-up delay-4">
@@ -481,9 +520,9 @@
 
   <hr>
 
-  <!-- Why psst -->
+  <!-- Why Persist -->
   <section>
-    <h2>Why psst?</h2>
+    <h2>Why Persist?</h2>
     <p class="section-sub">Secure by default. No cloud, no daemon, no drama.</p>
     <div class="cards">
       <div class="card">
@@ -494,7 +533,7 @@
       <div class="card">
         <div class="card-icon">🛡️</div>
         <h3>Zero Shell History Leakage</h3>
-        <p>psst never accepts secret values as CLI flags. Secure entries are entered through a hidden prompt or read directly from the clipboard — your terminal history stays clean.</p>
+        <p>Persist never accepts secret values as CLI flags. Secure entries are entered through a hidden prompt or read directly from the clipboard — your terminal history stays clean.</p>
       </div>
       <div class="card">
         <div class="card-icon">📋</div>
@@ -504,17 +543,35 @@
       <div class="card">
         <div class="card-icon">⏱️</div>
         <h3>Password Sessions</h3>
-        <p>Avoid re-typing your master password on every command. Set a session_timeout and psst caches the password locally for that window — stored at chmod 600, deleted on expiry.</p>
+        <p>Avoid re-typing your master password on every command. Set a session_timeout and Persist caches the password locally for that window — stored at chmod 600, deleted on expiry.</p>
       </div>
       <div class="card">
         <div class="card-icon">🔍</div>
         <h3>Fuzzy Key Search</h3>
-        <p>psst list github filters entries by substring. Make a typo with psst get? psst suggests the closest matching keys using Levenshtein distance — no more copy-paste of exact names.</p>
+        <p>psst list github filters entries by substring. Make a typo with psst get? Persist suggests the closest matching keys using Levenshtein distance — no more copy-paste of exact names.</p>
       </div>
       <div class="card">
         <div class="card-icon">🏠</div>
         <h3>Local-Only</h3>
         <p>No cloud, no network calls, no telemetry. Everything lives in ~/.persist/data.db on your machine. Works fully offline and responds instantly.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr>
+
+  <section id="install">
+    <h2>Install</h2>
+    <p class="section-sub">One binary. No runtime dependencies.</p>
+    <div class="install-block">
+      <div class="install-cmd">
+        <span class="prompt">$</span>
+        <code>brew install ChengaDev/tap/psst</code>
+        <button class="copy-btn" onclick="copyText(this, 'brew install ChengaDev/tap/psst')">Copy</button>
+      </div>
+      <div class="install-alts">
+        <a href="https://github.com/ChengaDev/persist/releases">&#8595; Binary download</a>
+        <a href="https://github.com/ChengaDev/persist#readme">go install</a>
       </div>
     </div>
   </section>
@@ -552,8 +609,8 @@
   </footer>
 
   <script>
-    function copyInstall(btn) {
-      navigator.clipboard.writeText('go install github.com/ChengaDev/persist@latest');
+    function copyText(btn, text) {
+      navigator.clipboard.writeText(text);
       btn.textContent = 'Copied!';
       setTimeout(() => btn.textContent = 'Copy', 2000);
     }
