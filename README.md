@@ -1,4 +1,4 @@
-# psst
+# Persist
 
 [![CI](https://github.com/ChengaDev/persist/actions/workflows/ci.yml/badge.svg)](https://github.com/ChengaDev/persist/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/ChengaDev/persist?color=blue)](https://github.com/ChengaDev/persist/releases)
